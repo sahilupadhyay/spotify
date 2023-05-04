@@ -41,6 +41,13 @@ function Sidebar(props) {
         <hr className={`border-t-[0.1px] border-gray-900`}/>
 
         {/*Playlist*/}
+        <p className={`cursor-pointer hover:text-white`}>Playlist name 1</p>
+        <p className={`cursor-pointer hover:text-white`}>Playlist name 2</p>
+        <p className={`cursor-pointer hover:text-white`}>Playlist name 4</p>
+        <p className={`cursor-pointer hover:text-white`}>Playlist name 3</p>
+        <p className={`cursor-pointer hover:text-white`}>Playlist name 5</p>
+        <p className={`cursor-pointer hover:text-white`}>Playlist name 6</p>
+        <p className={`cursor-pointer hover:text-white`}>Playlist name 7</p>
       </div>
     </div>
   );
