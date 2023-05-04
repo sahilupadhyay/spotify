@@ -20,7 +20,7 @@ export default Login;
 
 export async function getServerSideProps() {
     const providers = await getProviders();
-    console.log(providers);
+
     return {
         props: {providers}, // will be passed to the page component as props
     }

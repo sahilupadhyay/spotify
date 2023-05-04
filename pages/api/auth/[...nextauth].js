@@ -8,7 +8,6 @@ async function refreshAccessToken(token) {
     spotifyApi.setRefreshToken(token.refresh_token);
 
     const { body: refreshToken } = await spotifyApi.refreshAccessToken();
-    console.log('refresh token', refreshToken);
 
     return {
       ...token,
@@ -60,10 +59,11 @@ export const authOptions = {
       return await refreshAccessToken(token)
     },
 
-    async session({session, token}) {
+    async session({ session, token }) {
       session.user.accessToken = token.accessToken;
       session.user.refreshToken = token.refreshToken;
       session.user.username = token.username;
+      return session;
     }
   }
 }
