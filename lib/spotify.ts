@@ -23,7 +23,7 @@ const params: {scope: string} = {
 
 const queryParamString: URLSearchParams = new URLSearchParams(params);
 
-export const LOGIN_URL: string = `https //accounts.spotify.com/authorize?${queryParamString.toString()}`
+export const LOGIN_URL: string = `https://accounts.spotify.com/authorize?${queryParamString.toString()}`
 
 export const spotifyApi = new SpotifyWebApi({
   clientId: process.env.NEXT_PUBLIC_CLIENT_ID,
