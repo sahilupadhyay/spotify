@@ -9,8 +9,8 @@ export function useSongInfo() {
   const [songInfo, setSongInfo] = useState(null);
 
   useEffect(() => {
-    const fetchInfo = async  () => {
-      if (!currentTrackId) {
+    const fetchInfo = async () => {
+      if (currentTrackId) {
         const trackInfo = await fetch(
           `https://api.spotify.com/v1/tracks/${currentTrackId}`,
           {
@@ -19,10 +19,13 @@ export function useSongInfo() {
             }
           }
         ).then(res => res.json())
+
+        setSongInfo(trackInfo);
       }
     }
 
     fetchInfo();
+
   }, [currentTrackId, spotifyClient]);
 
   return songInfo;

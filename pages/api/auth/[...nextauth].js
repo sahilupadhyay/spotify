@@ -46,7 +46,7 @@ export const authOptions = {
           accessToken: account.access_token,
           refreshToken: account.refresh_token,
           username: account.providerAccountId,
-          accountTokenExpires: account.expires_at * 1000
+          accountTokenExpires: token.exp
         }
       }
 
