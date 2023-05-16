@@ -50,7 +50,7 @@ function Player(props) {
   }, 500), [spotifyClient])
 
   useEffect(() => {
-    if(volume > 0 && volume <100) {
+    if(isPlaying && volume > 0 && volume <100) {
       debounceAdjustVolume(volume);
     }
   }, [volume, debounceAdjustVolume])
@@ -66,11 +66,19 @@ function Player(props) {
     spotifyClient.getMyCurrentPlaybackState()
       .then(data => {
         if(data?.body?.is_playing) {
-          spotifyClient.pause();
-          setIsPlaying(false);
+          spotifyClient.pause()
+            .then(()=> setIsPlaying(false))
+            .catch(e => {
+              console.error(e.message);
+            });
+
         } else {
-          spotifyClient.play();
-          setIsPlaying(true);
+          spotifyClient
+            .play()
+            .then(() => setIsPlaying(true))
+            .catch(e => {
+              console.log('error', e.message);
+            });
         }
       })
   }
