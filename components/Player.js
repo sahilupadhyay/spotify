@@ -13,7 +13,14 @@ import {
   SpeakerWaveIcon as VolumeDownIcon
 } from "@heroicons/react/24/solid";
 import {SpeakerWaveIcon as VolumeUpIcon} from "@heroicons/react/24/outline/index";
-import {debounce} from 'lodash';
+
+function debounce(func, timeout = 300){
+  let timer;
+  return (...args) => {
+    clearTimeout(timer);
+    timer = setTimeout(() => { func.apply(this, args); }, timeout);
+  };
+}
 
 function Player(props) {
   const spotifyClient =  useSpotify();
@@ -22,11 +29,10 @@ function Player(props) {
   const [volume, setVolume] = useState(50);
   const songInfo = useSongInfo();
 
-  const fetchCurrentSongs = () => {
+  const fetchCurrentSongs = useCallback(() => {
     if(!songInfo) {
       spotifyClient.getMyCurrentPlayingTrack()
         .then(data => {
-          console.log('Now playing', setCurrentIdTrack(data.body?.item))
           setCurrentIdTrack(data.body?.item?.id)
 
           spotifyClient.getMyCurrentPlaybackState()
@@ -35,13 +41,19 @@ function Player(props) {
             })
         })
     }
-  }
+  }, [setCurrentIdTrack, setIsPlaying, songInfo, spotifyClient]);
 
-  const debounceAdjustVolume = useCallback((volume) => {
-    debounce(()=> {
-      spotifyClient.setVolume(parseInt(volume)).catch(error => console.error(error));
-    }, 500);
-  }, [spotifyClient])
+  const debounceAdjustVolume = useCallback(debounce((vol) => {
+    spotifyClient
+      .setVolume(parseInt(vol))
+      .catch(error => console.error(error));
+  }, 500), [spotifyClient])
+
+  useEffect(() => {
+    if(volume > 0 && volume <100) {
+      debounceAdjustVolume(volume);
+    }
+  }, [volume, debounceAdjustVolume])
 
   useEffect(() => {
     if(spotifyClient.getAccessToken() && !currentTrackId) {
@@ -50,18 +62,10 @@ function Player(props) {
     }
   }, [currentTrackId, spotifyClient, fetchCurrentSongs])
 
-  useEffect(() => {
-    if(volume > 0 && volume <100) {
-      debounceAdjustVolume(volume);
-    }
-  }, [volume, debounceAdjustVolume])
-
-
-
   const playPauseHandler = () => {
     spotifyClient.getMyCurrentPlaybackState()
       .then(data => {
-        if(data?.body.is_playing) {
+        if(data?.body?.is_playing) {
           spotifyClient.pause();
           setIsPlaying(false);
         } else {
@@ -101,7 +105,7 @@ function Player(props) {
       {/*right block*/}
       <div className={`flex items-center space-x-3 md:space-x-4 justify-end pr-5`}>
         <VolumeDownIcon className={`button`} onClick={() => volume > 0 && setVolume(volume - 10)} />
-        <input type='range' value={volume} min={0} max={100} className={`w-14 md:w-20`} onChange={e=> Number(setVolume(e.target.value))}/>
+        <input type='range' value={volume} min={0} max={100} className={`w-14 md:w-20`} onChange={e=> setVolume(Number(e.target.value))}/>
         <VolumeUpIcon className={`button`} onClick={() => volume < 100 && setVolume(volume + 10)} />
       </div>
     </div>
